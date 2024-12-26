@@ -30,7 +30,7 @@
 #include<vtkTransformPolyDataFilter.h>
 #include<vtkRenderer.h>
 #include<vtkGenericOpenGLRenderWindow.h>
-#include"mytitlebar.h"
+#include "CustomDlg.h"
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPICK;
 typedef EPICK::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Point_3> SMesh;
@@ -338,7 +338,7 @@ public:
     vtkSmartPointer<vtkActor> m_resActor;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> m_renderWindow;
     vtkSmartPointer<vtkRenderer> m_renderer;
-    MyTitleBar* m_titleBar;
+    CustomDlgTitle* m_titleBar;
 };
 
 #endif // CGALBOOL_H

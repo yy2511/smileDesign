@@ -71,7 +71,7 @@ public:
     void setqtObject(MyQtObject* object);
     void setRender(vtkSmartPointer<vtkRenderer> render);
     void getActorNum(int id){
-        cout<<"id="<<id<<endl;
+        std::cout<<"id="<<id<<std::endl;
     }
     //void Zoom(double factor) ;
 

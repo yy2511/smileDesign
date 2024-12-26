@@ -834,7 +834,7 @@ vtkSmartPointer<vtkActor>SmileLineStyle:: makeStraightLine(double*p1, double*p2)
     actor->SetMapper(mapper);
     actor->GetProperty()->SetColor(1, 1, 1);  // 设置线条颜色（红色）
     actor->GetProperty()->SetOpacity(0.6);
-    actor->GetProperty()->SetLineWidth(2.0);  // 设置线条宽度
+    actor->GetProperty()->SetLineWidth(2.5);  // 设置线条宽度
     lineActors.push_back(actor);
     Renderer->AddActor(actor);
     //Renderer->GetRenderWindow()->Render();

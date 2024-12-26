@@ -174,13 +174,13 @@ public:
     // 添加用于更新内容的函数
     void updateTip(const QString &newText, const QPixmap &newPixmap)
     {   qDebug()<<"newText"<<newText<<endl;
-        cout<< "The address of this textLabel is: " << textLabel << std::endl;
+        std::cout<< "The address of this textLabel is: " << textLabel << std::endl;
         if(!textLabel){
-            cout<<"textLabel is null"<<endl;
+            cout<<"textLabel is null"<<std::endl;
         }
 
         textLabel->setText(newText);  // 更新文字
-        cout<<11111<<endl;
+        std::cout<<11111<<std::endl;
         imageLabel->setPixmap(newPixmap.scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation));  // 更新图片
         adjustSize();  // 根据新内容调整大小
     }

@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <algorithm>
-#include<QMessageBox>
+#include "Messagebox.h"
 TeethPreview::TeethPreview(QWidget* parent)
 
      :m_image_start_x(0)
@@ -14,9 +14,12 @@ TeethPreview::TeethPreview(QWidget* parent)
 {   this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     resize(800, 600);  // 设置窗口的初始大小为 800x600
     updateUpperOrLower(true);  // 初始化为上牙视图
-    m_titleBar = new MyTitleBar(this);
+    m_titleBar = new CustomDlgTitle(this);
     m_titleBar->move(0, 0);
     m_titleBar->setBackgroundColor(15,15,15);
+    m_titleBar->setTitleContent(tr("Select Teeth"));
+    m_titleBar->setTitleIcon(":/icon/icon.png");
+
     connect(m_titleBar, SIGNAL(signalButtonMinClicked()), this, SLOT(onButtonMinClicked()));
     connect(m_titleBar, SIGNAL(signalButtonRestoreClicked()), this, SLOT(onButtonRestoreClicked()));
     connect(m_titleBar, SIGNAL(signalButtonMaxClicked()), this, SLOT(onButtonMaxClicked()));
@@ -33,7 +36,7 @@ TeethPreview::TeethPreview(QWidget* parent)
             color: white;               /* 默认字体颜色为白色 */
             border-radius: 8px;
             padding: 8px;
-            font-size: 18px;
+            font: 18px 'Microsoft Yahei';
         }
         QPushButton:hover {
             background: #1296db; /* 悬停时渐变背景 */
@@ -54,6 +57,7 @@ TeethPreview::TeethPreview(QWidget* parent)
     m_layout->addStretch();
     m_layout->addWidget(m_finish_button, 0, Qt::AlignCenter);
     m_layout->setAlignment(Qt::AlignCenter);
+    m_layout->setContentsMargins(0,40,0,0);
     setLayout(m_layout);
 
     connect(m_finish_button, &QPushButton::clicked, this, [=]() {
@@ -63,7 +67,7 @@ TeethPreview::TeethPreview(QWidget* parent)
         qDebug() << "Selection finished.";
 
         if(m_selected_teeth.size()==0){
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please select at least one!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please select at least one!"),FYMessageBox::Ok);
         }else{
             this->close();
         }
@@ -78,11 +82,11 @@ void TeethPreview::updateUpperOrLower(bool isUpper)
     clearAll();
 
     if (!isUpper) {
-        m_mask_image.load("./resources/pic/lower_teeth_mask.bmp");
-        m_origin_image.load("./resources/pic/lower_teeth.png");
+        m_mask_image.load(":/resources/pic/lower_teeth_mask.bmp");
+        m_origin_image.load(":/resources/pic/lower_teeth.png");
     } else {
-        m_mask_image.load("./resources/pic/upper_teeth_mask.bmp");
-        m_origin_image.load("./resources/pic/upper_teeth.png");
+        m_mask_image.load(":/resources/pic/upper_teeth_mask.bmp");
+        m_origin_image.load(":/resources/pic/upper_teeth.png");
     }
 
     m_mask_image = m_mask_image.convertToFormat(QImage::Format_Grayscale8);

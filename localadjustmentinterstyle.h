@@ -31,7 +31,7 @@ typedef CGAL::Surface_mesh<Point_3> SMesh;
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Vector_3 Vector_3;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
-typedef boost::property_traits<boost::property_map<SMesh,CGAL::vertex_point_t>::type>::value_type Point;
+typedef boost::property_traits<boost::property_map<SMesh,CGAL::vertex_point_t>::type>::value_type DSDPoint;
 // typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
 typedef CGAL::Surface_mesh_deformation<SMesh> Surface_mesh_deformation;

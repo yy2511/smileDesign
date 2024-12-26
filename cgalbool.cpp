@@ -2,24 +2,29 @@
 
 #include<QFileDialog>
 #include<QTimer>
+#include "MessageBox.h"
 
 STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
 
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     resize(800, 600);  // 设置窗口的初始大小为 800x600
 
-    m_titleBar = new MyTitleBar(this);
+    m_titleBar = new CustomDlgTitle(this);
     m_titleBar->move(0, 0);
     m_titleBar->setBackgroundColor(15,15,15);
+    m_titleBar->setTitleContent(tr("Veneer Preview"));
+    m_titleBar->setTitleIcon(":/icon/icon.png");
+
+
     connect(m_titleBar, SIGNAL(signalButtonMinClicked()), this, SLOT(onButtonMinClicked()));
     connect(m_titleBar, SIGNAL(signalButtonRestoreClicked()), this, SLOT(onButtonRestoreClicked()));
     connect(m_titleBar, SIGNAL(signalButtonMaxClicked()), this, SLOT(onButtonMaxClicked()));
     connect(m_titleBar, SIGNAL(signalButtonCloseClicked()), this, SLOT(onButtonCloseClicked()));
 
-    setWindowTitle(tr("Veneer Preview"));
+
     setStyleSheet("QFrame{background: #0F0F0F;}");
     mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0,30,0,0);
+    mainLayout->setContentsMargins(0,40,0,0);
     //mainLayout->setSpacing(0);
     buttonLayout = new QHBoxLayout();
     vtkWidget = new QVTKOpenGLNativeWidget(this);
@@ -39,7 +44,7 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
                 color: white;
                 border-radius: 8px;
                 padding: 8px;
-                font-size: 18px;
+                font: 18px 'Microsoft Yahei';
             }
             QPushButton:hover {
                 background: #1296db;
@@ -70,7 +75,7 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
             writer->SetInputData(m_filter->GetOutput());
             writer->Write();
 
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Save Successful!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Save Successful!"),FYMessageBox::Ok);
             QTimer::singleShot(1000, &m_box, SLOT(accept()));
             m_box.exec();
 
@@ -78,7 +83,7 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
         catch(const std::exception &e)
         {
             // 如果发生错误，提示用户
-            QMessageBox::critical(this, tr("Prompt Information"), tr("Failed to export file:: %1").arg(e.what()));
+            FYMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file:")+QString("%1").arg(e.what()),FYMessageBox::Ok);
         }
     }
             );
@@ -105,18 +110,18 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
                 writer->Write();
 
                 // 提示用户导出成功
-                QMessageBox::information(this, tr("Prompt Information"), tr("The file was successfully exported").arg(filePath));
+                FYMessageBox::information(this, tr("Prompt Information"), tr("The file was successfully exported").arg(filePath),FYMessageBox::Ok);
             }
             catch (const std::exception &e)
             {
                 // 如果发生错误，提示用户
-                QMessageBox::critical(this, tr("Prompt Information"), tr("Failed to export file").arg(e.what()));
+                FYMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file").arg(e.what()),FYMessageBox::Ok);
             }
         }
         else
         {
             // 用户未选择目录
-            QMessageBox::warning(this, tr("Prompt Information"), tr("Export directory not selected"));
+            FYMessageBox::warning(this, tr("Prompt Information"), tr("Export directory not selected"),FYMessageBox::Ok);
         }
     });
 }

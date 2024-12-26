@@ -6,7 +6,7 @@
 #include "QFileDialog"
 #include "vtkPLYReader.h"
 #include "vtkProperty.h"
-#include "qmessagebox.h"
+#include "MessageBox.h"
 #include "qtimer.h"
 #include "vtkInteractorStyleTrackballActor.h"
 #include "vtkInteractorStyleTrackballCamera.h"
@@ -179,12 +179,6 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
                                         -0.0497586, -0.405074, 0.912929, 168.496,
                                         0.19977, 0.891554, 0.406478, 37.3091,
                                         0, 0, 0, 1).finished()
-        },
-        { "./resources/teeth/style6.4", (Eigen::Matrix4d() <<
-                                            -0.976389, 0.2148, 0.0229266, -2.31085,
-                                        0.0537914, 0.344547, -0.937226, -162.182,
-                                        -0.209216, -0.913864, -0.347967, -57.1186,
-                                        -0, 0, 0, 1).finished()
         }
         // 可以添加更多路径和对应矩阵
     };
@@ -229,7 +223,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
         }else if(currentState==State::Import||currentState==State::Rectify){
 
         }else{
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),FYMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
         }
@@ -255,7 +249,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             teethlabel->show();
             teethComboBox->show();
             if(faceActor){
-                QPixmap pixmap("./resources/pic/lefteye.png"); // 替换为你的图片路径
+                QPixmap pixmap(":/resources/pic/lefteye.png"); // 替换为你的图片路径
 
                 tip->updateTip(tr("Click on the left eye"), pixmap);
                 //layoutW3->addWidget(tip);
@@ -264,7 +258,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             }
             isCalibrated = true;
         }else{
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),FYMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
 
@@ -398,7 +392,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
         if(currentState == State::Rectify){
 
         }else{
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head position correction first!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head position correction first!"),FYMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
         }
@@ -528,10 +522,10 @@ void SmileDesigenWidget::initUI() {
                 height: 50px;
             }
             QCheckBox::indicator:unchecked {
-                image: url(./resources/pic/toggle-off.png); /* 关闭状态图标 */
+                image: url(:/resources/pic/toggle-off.png); /* 关闭状态图标 */
             }
             QCheckBox::indicator:checked {
-                image: url(./resources/pic/toggle-on.png); /* 开启状态图标 */
+                image: url(:/resources/pic/toggle-on.png); /* 开启状态图标 */
             }
         )");
 
@@ -584,7 +578,7 @@ void SmileDesigenWidget::initUI() {
 
     /* 自定义下拉箭头 */
     QComboBox::down-arrow {
-        image: url("./resources/pic/down_arrow.png");
+        image: url(":/resources/pic/down_arrow.png");
         width: 10px;/*设置该图标的宽高*/
             height: 10px;
     }
@@ -599,10 +593,9 @@ void SmileDesigenWidget::initUI() {
     //teethComboBox->setIconSize(QSize(50, 50)); // 使得当前项的图标大小和下拉列表中保持一致
 
 
-    teethComboBox->addItem(QIcon("./resources/pic/teeth.png"), tr("Model 1"));
-    teethComboBox->addItem(QIcon("./resources/pic/teeth1.png"), tr("Model 2"));
-    teethComboBox->addItem(QIcon("./resources/pic/teeth2.png"), tr("Model 3"));
-    teethComboBox->addItem(QIcon("./resources/pic/teeth3.png"), tr("Model 4"));
+    teethComboBox->addItem(QIcon(":/resources/pic/teeth.png"), tr("Model 1"));
+    teethComboBox->addItem(QIcon(":/resources/pic/teeth1.png"), tr("Model 2"));
+
     //layoutWidget->insertWidget(2, teethComboBox);  // 将 teethComboBox 插入到第 1 个位置
     //layoutW2->addWidget(teethComboBox);
     connect(teethComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){
@@ -621,12 +614,7 @@ void SmileDesigenWidget::initUI() {
             break;
         }
         case 2:{
-            importTooth("./resources/teeth/style6.4");
-            break;
-        }
-        case 3:{
-            importTooth("./resources/teeth/style6.4");
-            break;
+
         }
         }
     });
@@ -714,7 +702,7 @@ void SmileDesigenWidget::initUI() {
 
 
 
-    QPixmap pixmap("./resources/pic/lefteye.png"); // 替换为你的图片路径
+    QPixmap pixmap(":/resources/pic/lefteye.png"); // 替换为你的图片路径
     tip = new TipWidget(tr("Click on the left eye"), pixmap);
     tip->setFixedWidth(180);
     //layoutfixed->insertWidget(layoutfixed->count(), tip);
@@ -724,7 +712,7 @@ void SmileDesigenWidget::initUI() {
     buttonFlip = new QPushButton(tr("Flip View"), w3D_sagittal);
     buttonFlip->setGeometry(0, 0, 90, 30);
 
-    QIcon icon("./resources/pic/test2.png"); // 资源文件路径或本地文件路径
+    QIcon icon(":/resources/pic/test2.png"); // 资源文件路径或本地文件路径
     buttonFlip->setIcon(icon); // 设置图标
     buttonFlip->setIconSize(QSize(20, 20)); // 设置图标大小
     this->setLayout(layoutSmile);
@@ -1034,7 +1022,7 @@ void SmileDesigenWidget::initUI() {
 
     /* 自定义下拉箭头 */
     QComboBox::down-arrow {
-        image: url("./resources/pic/down_arrow.png");
+        image: url(":/resources/pic/down_arrow.png");
         width: 10px;/*设置该图标的宽高*/
             height: 10px;
     }
@@ -1075,20 +1063,16 @@ void SmileDesigenWidget::initUI() {
     QWidget *page2 = new QWidget(stackedWidget);
     QVBoxLayout *layout2 = new QVBoxLayout(page2);
     layout2->addStretch(0);
-    //layout2->setSpacing(20);
+    //layout2->setSpacing(0);
     layout2->setAlignment(Qt::AlignHCenter);
 
 
 
     layout2->insertWidget(0,teethComboBox);
     layout2->insertWidget(0,teethlabel);
-    // 插入间距（在 polylinecomboBox 后添加间距）
-    layout2->insertSpacing(0, 25);
-
+    layout2->insertSpacing(0,10);
     layout2->insertWidget(0,polylinecomboBox);
     layout2->insertWidget(0,polylinelabel);
-
-
     layout2->insertWidget(0,buttonclearLine);
     teethlabel->hide();
     teethComboBox->hide();
@@ -1528,14 +1512,14 @@ bool SmileDesigenWidget::importFace() {
     // 检查面扫文件
     QFileInfo faceFileInfo(m_facePath);
     if (!faceFileInfo.exists() || !validExtensions.contains(faceFileInfo.suffix().toLower())) {
-        QMessageBox::warning(this, tr("Invalid File"), tr("The face file is either non-existent or not in .stl or .ply format."));
+        FYMessageBox::warning(this, tr("Invalid File"), tr("The face file is either non-existent or not in .stl or .ply format."));
         return false;
     }
 
     // 检查口扫文件
     QFileInfo mouthFileInfo(m_mouth_upper_Path);
     if (!mouthFileInfo.exists() || !validExtensions.contains(mouthFileInfo.suffix().toLower())) {
-        QMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
+        FYMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
         return false;
     }
     if (!m_facePath.isEmpty())
@@ -1624,14 +1608,14 @@ bool SmileDesigenWidget::importMouth() {
     // 检查面扫文件
     QFileInfo faceFileInfo(m_facePath);
     if (!faceFileInfo.exists() || !validExtensions.contains(faceFileInfo.suffix().toLower())) {
-        QMessageBox::warning(this, "Invalid File", "The face file is either non-existent or not in .stl or .ply format.");
+        FYMessageBox::warning(this, "Invalid File", "The face file is either non-existent or not in .stl or .ply format.");
         return false;
     }
 
     // 检查口扫文件
     QFileInfo mouthFileInfo(m_mouth_upper_Path);
     if (!mouthFileInfo.exists() || !validExtensions.contains(mouthFileInfo.suffix().toLower())) {
-        QMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
+        FYMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
         return false;
     }
 
@@ -1923,7 +1907,7 @@ void SmileDesigenWidget::onCheckBoxStateChanged(int state) {
         cout << 222 << endl;
         if(state == Qt::Checked){
             checkBox->setCheckState(Qt::Unchecked);
-            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the teeth model first!"));
+            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the teeth model first!"),FYMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
             return;
@@ -2171,7 +2155,7 @@ void SmileDesigenWidget::flipView() {
 void SmileDesigenWidget::onCheckBox2Clicked() {
     if (faceActor == nullptr) {
         //checkBox2->setCheckState(Qt::Unchecked);
-        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"));
+        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),FYMessageBox::Ok);
         QTimer::singleShot(1000, &m_box, SLOT(accept()));
         m_box.exec();
         return;
@@ -2184,7 +2168,7 @@ void SmileDesigenWidget::onCheckBox2Clicked() {
         renderer_main->GetRenderWindow()->GetInteractor()->SetInteractorStyle(selectStyle);
     }else{
 
-        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"));
+        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),FYMessageBox::Ok);
         QTimer::singleShot(500, &m_box, SLOT(accept()));
         m_box.exec();
     }
@@ -2197,7 +2181,7 @@ void SmileDesigenWidget::autoCut() {
 
 
     if (!faceActor) {
-        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"));
+        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),FYMessageBox::Ok);
         QTimer::singleShot(1000, &m_box, SLOT(accept()));
         m_box.exec();
         return;
@@ -2378,7 +2362,7 @@ void SmileDesigenWidget::autoCut() {
             std::cerr << "Failed to save the image!" << std::endl;
         }
     }else{
-        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"));
+        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),FYMessageBox::Ok);
         QTimer::singleShot(500, &m_box, SLOT(accept()));
         m_box.exec();
     }
@@ -2524,7 +2508,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         rightEyePoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap("./resources/pic/righteye.png"); // 替换为你的图片路径
+        QPixmap pixmap(":/resources/pic/righteye.png"); // 替换为你的图片路径
 
         tip->updateTip(tr("Click on the right eye"), pixmap);
         tip->show();
@@ -2539,7 +2523,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         leftEyePoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap("./resources/pic/noseup.png"); // 替换为你的图片路径
+        QPixmap pixmap(":/resources/pic/noseup.png"); // 替换为你的图片路径
         tip->updateTip(tr("Click on the upper nose"), pixmap);
         tip->show();
         //smileStyle->setStraightPoints(leftEyePoint);
@@ -2553,7 +2537,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         noseOnPoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap("./resources/pic/noseunder.png"); // 替换为你的图片路径
+        QPixmap pixmap(":/resources/pic/noseunder.png"); // 替换为你的图片路径
         tip->updateTip(tr("Click on the lower nose"), pixmap);
         tip->show();
     }

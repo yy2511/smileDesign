@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include"mytitlebar.h"
+#include "CustomDlg.h"
 #include<QDialog>
 class TeethPreview : public QDialog
 {
@@ -61,7 +61,7 @@ private:
 
     QVBoxLayout* m_layout;  // 布局布局
 
-    MyTitleBar* m_titleBar;
+    CustomDlgTitle* m_titleBar;
 
 };
 
