@@ -179,6 +179,12 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
                                         -0.0497586, -0.405074, 0.912929, 168.496,
                                         0.19977, 0.891554, 0.406478, 37.3091,
                                         0, 0, 0, 1).finished()
+        },
+        { "./resources/teeth/style6.4", (Eigen::Matrix4d() <<
+                                            -0.976389, 0.2148, 0.0229266, -2.31085,
+                                        0.0537914, 0.344547, -0.937226, -162.182,
+                                        -0.209216, -0.913864, -0.347967, -57.1186,
+                                        -0, 0, 0, 1).finished()
         }
         // 可以添加更多路径和对应矩阵
     };
@@ -595,7 +601,8 @@ void SmileDesigenWidget::initUI() {
 
     teethComboBox->addItem(QIcon("./resources/pic/teeth.png"), tr("Model 1"));
     teethComboBox->addItem(QIcon("./resources/pic/teeth1.png"), tr("Model 2"));
-
+    teethComboBox->addItem(QIcon("./resources/pic/teeth2.png"), tr("Model 3"));
+    teethComboBox->addItem(QIcon("./resources/pic/teeth3.png"), tr("Model 4"));
     //layoutWidget->insertWidget(2, teethComboBox);  // 将 teethComboBox 插入到第 1 个位置
     //layoutW2->addWidget(teethComboBox);
     connect(teethComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){
@@ -614,7 +621,12 @@ void SmileDesigenWidget::initUI() {
             break;
         }
         case 2:{
-
+            importTooth("./resources/teeth/style6.4");
+            break;
+        }
+        case 3:{
+            importTooth("./resources/teeth/style6.4");
+            break;
         }
         }
     });
