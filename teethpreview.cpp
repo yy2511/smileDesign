@@ -6,7 +6,8 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <algorithm>
-#include "Messagebox.h"
+//#include "Messagebox.h"
+#include"QMessageBox"
 TeethPreview::TeethPreview(QWidget* parent)
 
      :m_image_start_x(0)
@@ -14,7 +15,7 @@ TeethPreview::TeethPreview(QWidget* parent)
 {   this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     resize(800, 600);  // 设置窗口的初始大小为 800x600
     updateUpperOrLower(true);  // 初始化为上牙视图
-    m_titleBar = new CustomDlgTitle(this);
+    m_titleBar = new MyTitleBar(this);
     m_titleBar->move(0, 0);
     m_titleBar->setBackgroundColor(15,15,15);
     m_titleBar->setTitleContent(tr("Select Teeth"));
@@ -67,7 +68,7 @@ TeethPreview::TeethPreview(QWidget* parent)
         qDebug() << "Selection finished.";
 
         if(m_selected_teeth.size()==0){
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please select at least one!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please select at least one!"),QMessageBox::Ok);
         }else{
             this->close();
         }
@@ -82,11 +83,11 @@ void TeethPreview::updateUpperOrLower(bool isUpper)
     clearAll();
 
     if (!isUpper) {
-        m_mask_image.load(":/resources/pic/lower_teeth_mask.bmp");
-        m_origin_image.load(":/resources/pic/lower_teeth.png");
+        m_mask_image.load("./resources/pic/lower_teeth_mask.bmp");
+        m_origin_image.load("./resources/pic/lower_teeth.png");
     } else {
-        m_mask_image.load(":/resources/pic/upper_teeth_mask.bmp");
-        m_origin_image.load(":/resources/pic/upper_teeth.png");
+        m_mask_image.load("./resources/pic/upper_teeth_mask.bmp");
+        m_origin_image.load("./resources/pic/upper_teeth.png");
     }
 
     m_mask_image = m_mask_image.convertToFormat(QImage::Format_Grayscale8);

@@ -2,14 +2,14 @@
 
 #include<QFileDialog>
 #include<QTimer>
-#include "MessageBox.h"
+//#include "MessageBox.h"
 
 STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
 
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
     resize(800, 600);  // 设置窗口的初始大小为 800x600
 
-    m_titleBar = new CustomDlgTitle(this);
+    m_titleBar = new MyTitleBar(this);
     m_titleBar->move(0, 0);
     m_titleBar->setBackgroundColor(15,15,15);
     m_titleBar->setTitleContent(tr("Veneer Preview"));
@@ -75,7 +75,7 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
             writer->SetInputData(m_filter->GetOutput());
             writer->Write();
 
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Save Successful!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Save Successful!"),QMessageBox::Ok);
             QTimer::singleShot(1000, &m_box, SLOT(accept()));
             m_box.exec();
 
@@ -83,7 +83,7 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
         catch(const std::exception &e)
         {
             // 如果发生错误，提示用户
-            FYMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file:")+QString("%1").arg(e.what()),FYMessageBox::Ok);
+            QMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file:")+QString("%1").arg(e.what()),QMessageBox::Ok);
         }
     }
             );
@@ -110,18 +110,18 @@ STLBooleanProcessor::STLBooleanProcessor(QWidget* parent){
                 writer->Write();
 
                 // 提示用户导出成功
-                FYMessageBox::information(this, tr("Prompt Information"), tr("The file was successfully exported").arg(filePath),FYMessageBox::Ok);
+                QMessageBox::information(this, tr("Prompt Information"), tr("The file was successfully exported").arg(filePath),QMessageBox::Ok);
             }
             catch (const std::exception &e)
             {
                 // 如果发生错误，提示用户
-                FYMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file").arg(e.what()),FYMessageBox::Ok);
+                QMessageBox::warning(this, tr("Prompt Information"), tr("Failed to export file").arg(e.what()),QMessageBox::Ok);
             }
         }
         else
         {
             // 用户未选择目录
-            FYMessageBox::warning(this, tr("Prompt Information"), tr("Export directory not selected"),FYMessageBox::Ok);
+            QMessageBox::warning(this, tr("Prompt Information"), tr("Export directory not selected"),QMessageBox::Ok);
         }
     });
 }

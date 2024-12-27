@@ -6,7 +6,7 @@
 #include "QFileDialog"
 #include "vtkPLYReader.h"
 #include "vtkProperty.h"
-#include "MessageBox.h"
+//#include "MessageBox.h"
 #include "qtimer.h"
 #include "vtkInteractorStyleTrackballActor.h"
 #include "vtkInteractorStyleTrackballCamera.h"
@@ -56,6 +56,7 @@
 #include<vtkPointData.h>
 #include <vtkWindowToImageFilter.h>
 #include <vtkPNGWriter.h>
+#include<vtkPLYWriter.h>
 #include<QDebug>
 #include<iostream>
 #include <direct.h>
@@ -179,6 +180,18 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
                                         -0.0497586, -0.405074, 0.912929, 168.496,
                                         0.19977, 0.891554, 0.406478, 37.3091,
                                         0, 0, 0, 1).finished()
+        },
+        { "./resources/teeth/style6.4", (Eigen::Matrix4d() <<
+                                            -0.998344, -0.00776237, 0.056996, -8.49816,
+                                        0.0574589, -0.181026, 0.981798, 13.3217,
+                                        0.00269668, 0.983448, 0.181172, -25.4419,
+                                        0, 0, 0, 1).finished()
+        },
+        { "./resources/teeth/style5.0", (Eigen::Matrix4d() <<
+                                            -0.998483, -0.0329816, 0.0441023, -8.35941,
+                                        0.0495417, -0.188213, 0.980878, 12.297,
+                                        -0.0240503, 0.981574, 0.189561, -27.088,
+                                        0, 0, 0, 1).finished()
         }
         // 可以添加更多路径和对应矩阵
     };
@@ -223,7 +236,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
         }else if(currentState==State::Import||currentState==State::Rectify){
 
         }else{
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),QMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
         }
@@ -249,7 +262,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             teethlabel->show();
             teethComboBox->show();
             if(faceActor){
-                QPixmap pixmap(":/resources/pic/lefteye.png"); // 替换为你的图片路径
+                QPixmap pixmap("./resources/pic/lefteye.png"); // 替换为你的图片路径
 
                 tip->updateTip(tr("Click on the left eye"), pixmap);
                 //layoutW3->addWidget(tip);
@@ -258,90 +271,91 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             }
             isCalibrated = true;
         }else{
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please import the model first!"),QMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
 
         }});
     connect(buttonCalibrate, &QPushButton::clicked, this, [this]() {
 
-        if(currentState == State::Import ||currentState == State::Rectify ){
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    std::cout << calibrate_transform->GetMatrix()->GetElement(i, j) << " ";
-                }
-                std::cout << std::endl;
-            }
-            calibrate_transform->Inverse();
-            if(!isCalibrated){
-                vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-                transformFilter->SetTransform(calibrate_transform);
-                transformFilter->SetInputData(faceActor->GetMapper()->GetInput());
-                transformFilter->Update();
+        // if(currentState == State::Import ||currentState == State::Rectify ){
+        //     cout<<2511<<endl;
+        //     for (int i = 0; i < 4; i++) {
+        //         for (int j = 0; j < 4; j++) {
+        //             std::cout << calibrate_transform->GetMatrix()->GetElement(i, j) << " ";
+        //         }
+        //         std::cout << std::endl;
+        //     }
+        //     calibrate_transform->Inverse();
+        //     // if(!isCalibrated){
+        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        //     //     transformFilter->SetTransform(calibrate_transform);
+        //     //     transformFilter->SetInputData(faceActor->GetMapper()->GetInput());
+        //     //     transformFilter->Update();
+        //     //     cout<<824<<endl;
+        //     //     // 获取变换后的数据
+        //     //     vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter->GetOutput();
 
-                // 获取变换后的数据
-                vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter->GetOutput();
+        //     //     //faceActor->SetUserTransform(m_transform);
 
-                //faceActor->SetUserTransform(m_transform);
+        //     //     vtkPolyDataMapper* polyDataMapper = dynamic_cast<vtkPolyDataMapper*>(faceActor->GetMapper());
+        //     //     if (polyDataMapper) {
+        //     //         polyDataMapper->SetInputData(transformedPolyData);
+        //     //     }
+        //     //     else {
+        //     //         std::cerr << "The mapper is not a vtkPolyDataMapper!" << std::endl;
+        //     //     }
 
-                vtkPolyDataMapper* polyDataMapper = dynamic_cast<vtkPolyDataMapper*>(faceActor->GetMapper());
-                if (polyDataMapper) {
-                    polyDataMapper->SetInputData(transformedPolyData);
-                }
-                else {
-                    std::cerr << "The mapper is not a vtkPolyDataMapper!" << std::endl;
-                }
+        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter1 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        //     //     transformFilter1->SetTransform(calibrate_transform);
 
-                vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter1 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-                transformFilter1->SetTransform(calibrate_transform);
+        //     //     for (int i = 0; i < 4; i++) {
+        //     //         // 获取当前 Actor 的 Mapper 并检查其类型
+        //     //         vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkPolyDataMapper::SafeDownCast(mouthActors[i]->GetMapper());
 
-                for (int i = 0; i < 4; i++) {
-                    // 获取当前 Actor 的 Mapper 并检查其类型
-                    vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkPolyDataMapper::SafeDownCast(mouthActors[i]->GetMapper());
+        //     //         // 获取当前 Actor 的输入数据并检查其有效性
+        //     //         vtkSmartPointer<vtkPolyData> polyData = polyDataMapper->GetInput();
+        //     //         // 设置 TransformPolyDataFilter 的输入数据
+        //     //         transformFilter1->SetInputData(polyData);
+        //     //         transformFilter1->Update();
 
-                    // 获取当前 Actor 的输入数据并检查其有效性
-                    vtkSmartPointer<vtkPolyData> polyData = polyDataMapper->GetInput();
-                    // 设置 TransformPolyDataFilter 的输入数据
-                    transformFilter1->SetInputData(polyData);
-                    transformFilter1->Update();
+        //     //         // 将变换后的数据设置回 Mapper
+        //     //         vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter1->GetOutput();
+        //     //         polyDataMapper->SetInputData(transformedPolyData);
+        //     //     }
 
-                    // 将变换后的数据设置回 Mapper
-                    vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter1->GetOutput();
-                    polyDataMapper->SetInputData(transformedPolyData);
-                }
+        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        //     //     transformFilter2->SetTransform(calibrate_transform);
+        //     //     vtkSmartPointer<vtkPolyDataMapper> polyDataMapper2 = vtkPolyDataMapper::SafeDownCast(mouthActors_lower[0]->GetMapper());
 
-                vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-                transformFilter2->SetTransform(calibrate_transform);
-                vtkSmartPointer<vtkPolyDataMapper> polyDataMapper2 = vtkPolyDataMapper::SafeDownCast(mouthActors_lower[0]->GetMapper());
+        //     //     // 获取当前 Actor 的输入数据并检查其有效性
+        //     //     vtkSmartPointer<vtkPolyData> polyData2= polyDataMapper2->GetInput();
+        //     //     // 设置 TransformPolyDataFilter 的输入数据
+        //     //     transformFilter2->SetInputData(polyData2);
+        //     //     transformFilter2->Update();
 
-                // 获取当前 Actor 的输入数据并检查其有效性
-                vtkSmartPointer<vtkPolyData> polyData2= polyDataMapper2->GetInput();
-                // 设置 TransformPolyDataFilter 的输入数据
-                transformFilter2->SetInputData(polyData2);
-                transformFilter2->Update();
+        //     //     // 将变换后的数据设置回 Mapper
+        //     //     vtkSmartPointer<vtkPolyData> transformedPolyData2 = transformFilter2->GetOutput();
+        //     //     polyDataMapper2->SetInputData(transformedPolyData2);
 
-                // 将变换后的数据设置回 Mapper
-                vtkSmartPointer<vtkPolyData> transformedPolyData2 = transformFilter2->GetOutput();
-                polyDataMapper2->SetInputData(transformedPolyData2);
+        //     //     //m_mesh_view->setCameraProperties(campos,focalpoint,viewup,true,60);
 
-                //m_mesh_view->setCameraProperties(campos,focalpoint,viewup,true,60);
+        //     //     vtkCamera* camera = renderer_main->GetActiveCamera();
 
-                vtkCamera* camera = renderer_main->GetActiveCamera();
+        //     //     // 设置相机的新位置
+        //     //     camera->SetPosition(0, 0, -300);
 
-                // 设置相机的新位置
-                camera->SetPosition(0, 0, -300);
+        //     //     // 设置相机焦点为模型中心
+        //     //     camera->SetFocalPoint(0, 0, 0);
 
-                // 设置相机焦点为模型中心
-                camera->SetFocalPoint(0, 0, 0);
+        //     //     // 可选: 设置相机的上方向，防止图像上下颠倒
+        //     //     camera->SetViewUp(0, -1, 0); // 根据实际情况调整
+        //     //     renderer_main->ResetCamera();
+        //     //     renderer_main->GetRenderWindow()->Render();
+        //     //     isCalibrated = false;
+        //     // }
 
-                // 可选: 设置相机的上方向，防止图像上下颠倒
-                camera->SetViewUp(0, -1, 0); // 根据实际情况调整
-                renderer_main->ResetCamera();
-                renderer_main->GetRenderWindow()->Render();
-                isCalibrated = false;
-            }
-
-        }
+        // }
 
     });
 
@@ -392,7 +406,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
         if(currentState == State::Rectify){
 
         }else{
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head position correction first!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head position correction first!"),QMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
         }
@@ -522,10 +536,10 @@ void SmileDesigenWidget::initUI() {
                 height: 50px;
             }
             QCheckBox::indicator:unchecked {
-                image: url(:/resources/pic/toggle-off.png); /* 关闭状态图标 */
+                image: url(./resources/pic/toggle-off.png); /* 关闭状态图标 */
             }
             QCheckBox::indicator:checked {
-                image: url(:/resources/pic/toggle-on.png); /* 开启状态图标 */
+                image: url(./resources/pic/toggle-on.png); /* 开启状态图标 */
             }
         )");
 
@@ -578,7 +592,7 @@ void SmileDesigenWidget::initUI() {
 
     /* 自定义下拉箭头 */
     QComboBox::down-arrow {
-        image: url(":/resources/pic/down_arrow.png");
+        image: url("./resources/pic/down_arrow.png");
         width: 10px;/*设置该图标的宽高*/
             height: 10px;
     }
@@ -593,9 +607,10 @@ void SmileDesigenWidget::initUI() {
     //teethComboBox->setIconSize(QSize(50, 50)); // 使得当前项的图标大小和下拉列表中保持一致
 
 
-    teethComboBox->addItem(QIcon(":/resources/pic/teeth.png"), tr("Model 1"));
-    teethComboBox->addItem(QIcon(":/resources/pic/teeth1.png"), tr("Model 2"));
-
+    teethComboBox->addItem(QIcon("./resources/pic/teeth.png"), tr("Model 1"));
+    teethComboBox->addItem(QIcon("./resources/pic/teeth1.png"), tr("Model 2"));
+    teethComboBox->addItem(QIcon("./resources/pic/teeth2.png"), tr("Model 3"));
+    teethComboBox->addItem(QIcon("./resources/pic/style5.0.png"), tr("Model 4"));
     //layoutWidget->insertWidget(2, teethComboBox);  // 将 teethComboBox 插入到第 1 个位置
     //layoutW2->addWidget(teethComboBox);
     connect(teethComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){
@@ -614,7 +629,12 @@ void SmileDesigenWidget::initUI() {
             break;
         }
         case 2:{
-
+            importTooth("./resources/teeth/style6.4");
+            break;
+        }
+        case 3:{
+            importTooth("./resources/teeth/style5.0");
+            break;
         }
         }
     });
@@ -702,7 +722,7 @@ void SmileDesigenWidget::initUI() {
 
 
 
-    QPixmap pixmap(":/resources/pic/lefteye.png"); // 替换为你的图片路径
+    QPixmap pixmap("./resources/pic/lefteye.png"); // 替换为你的图片路径
     tip = new TipWidget(tr("Click on the left eye"), pixmap);
     tip->setFixedWidth(180);
     //layoutfixed->insertWidget(layoutfixed->count(), tip);
@@ -712,7 +732,7 @@ void SmileDesigenWidget::initUI() {
     buttonFlip = new QPushButton(tr("Flip View"), w3D_sagittal);
     buttonFlip->setGeometry(0, 0, 90, 30);
 
-    QIcon icon(":/resources/pic/test2.png"); // 资源文件路径或本地文件路径
+    QIcon icon("./resources/pic/test2.png"); // 资源文件路径或本地文件路径
     buttonFlip->setIcon(icon); // 设置图标
     buttonFlip->setIconSize(QSize(20, 20)); // 设置图标大小
     this->setLayout(layoutSmile);
@@ -1022,7 +1042,7 @@ void SmileDesigenWidget::initUI() {
 
     /* 自定义下拉箭头 */
     QComboBox::down-arrow {
-        image: url(":/resources/pic/down_arrow.png");
+        image: url("./resources/pic/down_arrow.png");
         width: 10px;/*设置该图标的宽高*/
             height: 10px;
     }
@@ -1512,14 +1532,14 @@ bool SmileDesigenWidget::importFace() {
     // 检查面扫文件
     QFileInfo faceFileInfo(m_facePath);
     if (!faceFileInfo.exists() || !validExtensions.contains(faceFileInfo.suffix().toLower())) {
-        FYMessageBox::warning(this, tr("Invalid File"), tr("The face file is either non-existent or not in .stl or .ply format."));
+        QMessageBox::warning(this, tr("Invalid File"), tr("The face file is either non-existent or not in .stl or .ply format."));
         return false;
     }
 
     // 检查口扫文件
     QFileInfo mouthFileInfo(m_mouth_upper_Path);
     if (!mouthFileInfo.exists() || !validExtensions.contains(mouthFileInfo.suffix().toLower())) {
-        FYMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
+        QMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
         return false;
     }
     if (!m_facePath.isEmpty())
@@ -1608,14 +1628,14 @@ bool SmileDesigenWidget::importMouth() {
     // 检查面扫文件
     QFileInfo faceFileInfo(m_facePath);
     if (!faceFileInfo.exists() || !validExtensions.contains(faceFileInfo.suffix().toLower())) {
-        FYMessageBox::warning(this, "Invalid File", "The face file is either non-existent or not in .stl or .ply format.");
+        QMessageBox::warning(this, "Invalid File", "The face file is either non-existent or not in .stl or .ply format.");
         return false;
     }
 
     // 检查口扫文件
     QFileInfo mouthFileInfo(m_mouth_upper_Path);
     if (!mouthFileInfo.exists() || !validExtensions.contains(mouthFileInfo.suffix().toLower())) {
-        FYMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
+        QMessageBox::warning(this, tr("Invalid File"), tr("The mouth file is either non-existent or not in .stl or .ply format."));
         return false;
     }
 
@@ -1907,7 +1927,7 @@ void SmileDesigenWidget::onCheckBoxStateChanged(int state) {
         cout << 222 << endl;
         if(state == Qt::Checked){
             checkBox->setCheckState(Qt::Unchecked);
-            FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the teeth model first!"),FYMessageBox::Ok);
+            QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the teeth model first!"),QMessageBox::Ok);
             QTimer::singleShot(500, &m_box, SLOT(accept()));
             m_box.exec();
             return;
@@ -2155,7 +2175,7 @@ void SmileDesigenWidget::flipView() {
 void SmileDesigenWidget::onCheckBox2Clicked() {
     if (faceActor == nullptr) {
         //checkBox2->setCheckState(Qt::Unchecked);
-        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),FYMessageBox::Ok);
+        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),QMessageBox::Ok);
         QTimer::singleShot(1000, &m_box, SLOT(accept()));
         m_box.exec();
         return;
@@ -2168,7 +2188,7 @@ void SmileDesigenWidget::onCheckBox2Clicked() {
         renderer_main->GetRenderWindow()->GetInteractor()->SetInteractorStyle(selectStyle);
     }else{
 
-        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),FYMessageBox::Ok);
+        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),QMessageBox::Ok);
         QTimer::singleShot(500, &m_box, SLOT(accept()));
         m_box.exec();
     }
@@ -2181,7 +2201,7 @@ void SmileDesigenWidget::autoCut() {
 
 
     if (!faceActor) {
-        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),FYMessageBox::Ok);
+        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please load the face scan model first!"),QMessageBox::Ok);
         QTimer::singleShot(1000, &m_box, SLOT(accept()));
         m_box.exec();
         return;
@@ -2362,7 +2382,7 @@ void SmileDesigenWidget::autoCut() {
             std::cerr << "Failed to save the image!" << std::endl;
         }
     }else{
-        FYMessageBox m_box(FYMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),FYMessageBox::Ok);
+        QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please perform head alignment first!"),QMessageBox::Ok);
         QTimer::singleShot(500, &m_box, SLOT(accept()));
         m_box.exec();
     }
@@ -2508,7 +2528,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         rightEyePoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap(":/resources/pic/righteye.png"); // 替换为你的图片路径
+        QPixmap pixmap("./resources/pic/righteye.png"); // 替换为你的图片路径
 
         tip->updateTip(tr("Click on the right eye"), pixmap);
         tip->show();
@@ -2523,7 +2543,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         leftEyePoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap(":/resources/pic/noseup.png"); // 替换为你的图片路径
+        QPixmap pixmap("./resources/pic/noseup.png"); // 替换为你的图片路径
         tip->updateTip(tr("Click on the upper nose"), pixmap);
         tip->show();
         //smileStyle->setStraightPoints(leftEyePoint);
@@ -2537,7 +2557,7 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         noseOnPoint[2] = z;
         cout << "pickStyle->SelectedActors.size():" << pickStyle->SelectedActors.size() << endl;
 
-        QPixmap pixmap(":/resources/pic/noseunder.png"); // 替换为你的图片路径
+        QPixmap pixmap("./resources/pic/noseunder.png"); // 替换为你的图片路径
         tip->updateTip(tr("Click on the lower nose"), pixmap);
         tip->show();
     }
@@ -2593,6 +2613,11 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         // 获取变换后的数据
         vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter->GetOutput();
 
+        vtkSmartPointer<vtkSTLWriter> writer1 = vtkSmartPointer<vtkSTLWriter>::New();
+        writer1->SetFileName(("transform_face.stl"));
+        writer1->SetInputData(transformedPolyData);
+        writer1->Write();
+        cout<<"transform_face.stl have saved"<<endl;
         //faceActor->SetUserTransform(m_transform);
 
         vtkPolyDataMapper* polyDataMapper = dynamic_cast<vtkPolyDataMapper*>(faceActor->GetMapper());
