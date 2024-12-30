@@ -76,9 +76,6 @@ LIBS += D:/Libs/PCL-1.12.1/3rdParty/Boost/lib/*vc142-mt-x64-1_78.lib
 
 INCLUDEPATH += D:/eigen-3.4.0/eigen-3.4.0
 
-# vtk8.2
-# INCLUDEPATH += $$quote(D:/vtk/VTK-8.2.0-lib-release/include/vtk-8.2)
-# LIBS +=  $$quote(D:/vtk/VTK-8.2.0-lib-release/lib/lib*.a)
 
 # vtk9.1
 INCLUDEPATH +=D:/vtk/VTK-9.1.0/include/vtk-9.1

@@ -82,10 +82,10 @@ public:
     std::vector<vtkSmartPointer<vtkActor>> toothList;
 
     vtkSmartPointer<vtkActor> mergedActor;
-
-
-private:
     void generateBox2D();
+    bool isHaveBox();
+private:
+
     vtkSmartPointer<vtkActor2D> generateCircleHandle(const std::vector<double>& screenPoint);
     void updataBox();
     void updataHandles(int id);

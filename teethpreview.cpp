@@ -66,11 +66,14 @@ TeethPreview::TeethPreview(QWidget* parent)
             qDebug()<<i;
         }
         qDebug() << "Selection finished.";
-
+        emit choseNumsOfTeeth(m_selected_teeth.size());
         if(m_selected_teeth.size()==0){
             QMessageBox m_box(QMessageBox::Information, tr("Prompt Information"), tr("Please select at least one!"),QMessageBox::Ok);
+            qDebug()<<"unchose any tooth";
         }else{
+
             this->close();
+
         }
 
     });

@@ -80,6 +80,9 @@ public slots:
 	void importAll();
 
     void boolteeth1();
+    void resetButton(QPushButton* currentButton,bool isEnable);
+    void resetStatus();
+
 private:
 	void initUI();
 	void initVTK();
@@ -148,6 +151,8 @@ private:
 	QPushButton* buttonFree;
 	QPushButton* buttonLine;
     QPushButton* buttonclearLine;
+    QPushButton* buttonBool;
+    QPushButton* showDialogButton;
 	TipWidget* tip;
     QStackedWidget *stackedWidget;
 

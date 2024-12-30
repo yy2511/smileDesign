@@ -30,7 +30,8 @@ private:
     void initTeethPos();  // 初始化牙齿位置
     int imageClickd(int x, int y);  // 处理图片点击事件
     void updateToothImage();  // 更新牙齿图片
-
+signals:
+    void choseNumsOfTeeth(int n);
 
 public slots:
 

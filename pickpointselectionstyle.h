@@ -14,11 +14,12 @@
 #include <vtkProperty.h>
 #include <vector>
 #include <functional>
-
+#include <QObject>
 
 
 class PickPointSelectionStyle : public vtkInteractorStyleTrackballCamera
 {
+
 
 public:
     static PickPointSelectionStyle* New();

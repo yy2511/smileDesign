@@ -1534,3 +1534,7 @@ void HandleInteractor::flipsync(){
     }
     this->selectedRenderer->GetRenderWindow()->Render();
 }
+
+bool HandleInteractor::isHaveBox(){
+    return box;
+}

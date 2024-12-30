@@ -169,17 +169,12 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
 
 
     pathToMatrixMap = {
-        { "./resources/teeth", (Eigen::Matrix4d() <<
-                                      0.979232, 0.0132982, 0.202309, -4.20313,
-                                  0.0606796, 0.932885, -0.355027, -11.5458,
-                                  -0.193452, 0.35993, 0.912703, -49.5687,
-                                  0, 0, 0, 1).finished()
-        },
+
         { "./resources/teeth/style", (Eigen::Matrix4d() <<
-                                            -0.978579, 0.202602, 0.0365592, 4.47705,
-                                        -0.0497586, -0.405074, 0.912929, 168.496,
-                                        0.19977, 0.891554, 0.406478, 37.3091,
-                                        0, 0, 0, 1).finished()
+                                         0.979232, 0.0132982, 0.202309, -4.20313,
+                                     0.0606796, 0.932885, -0.355027, -11.5458,
+                                     -0.193452, 0.35993, 0.912703, -49.5687,
+                                     0, 0, 0, 1).finished()
         },
         { "./resources/teeth/style6.4", (Eigen::Matrix4d() <<
                                             -0.998344, -0.00776237, 0.056996, -8.49816,
@@ -192,6 +187,18 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
                                         0.0495417, -0.188213, 0.980878, 12.297,
                                         -0.0240503, 0.981574, 0.189561, -27.088,
                                         0, 0, 0, 1).finished()
+        },
+        { "./resources/teeth/style4.2", (Eigen::Matrix4d() <<
+                                            -0.998348, 0.0434338, 0.0376043, 4.7042,
+                                        0.0323853, -0.115172, 0.992817, 157.464,
+                                        0.0474528, 0.992395, 0.113575, -7.41412,
+                                        0, 0, 0, 1).finished()
+        },
+        { "./resources/teeth/style4.1", (Eigen::Matrix4d() <<
+                                               -0.998348, 0.0434338, 0.0376043, 4.7042,
+                                           0.0323853, -0.115172, 0.992817, 157.464,
+                                           0.0474528, 0.992395, 0.113575, -7.41412,
+                                           0, 0, 0, 1).finished()
         }
         // 可以添加更多路径和对应矩阵
     };
@@ -252,7 +259,9 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
     connect(buttonCalibrate, &QPushButton::clicked, this, [this]() {
 
         if(currentState == State::Import ||currentState == State::Rectify ){
-            cout<<"have imported"<<endl;
+            resetStatus();
+            cout<<"头位矫正已开始"<<endl;
+            resetButton(buttonCalibrate,false);
             currentState = State::Rectify;
 
             pickStyle->SetDefaultRenderer(renderer_main);
@@ -276,88 +285,6 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             m_box.exec();
 
         }});
-    connect(buttonCalibrate, &QPushButton::clicked, this, [this]() {
-
-        // if(currentState == State::Import ||currentState == State::Rectify ){
-        //     cout<<2511<<endl;
-        //     for (int i = 0; i < 4; i++) {
-        //         for (int j = 0; j < 4; j++) {
-        //             std::cout << calibrate_transform->GetMatrix()->GetElement(i, j) << " ";
-        //         }
-        //         std::cout << std::endl;
-        //     }
-        //     calibrate_transform->Inverse();
-        //     // if(!isCalibrated){
-        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        //     //     transformFilter->SetTransform(calibrate_transform);
-        //     //     transformFilter->SetInputData(faceActor->GetMapper()->GetInput());
-        //     //     transformFilter->Update();
-        //     //     cout<<824<<endl;
-        //     //     // 获取变换后的数据
-        //     //     vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter->GetOutput();
-
-        //     //     //faceActor->SetUserTransform(m_transform);
-
-        //     //     vtkPolyDataMapper* polyDataMapper = dynamic_cast<vtkPolyDataMapper*>(faceActor->GetMapper());
-        //     //     if (polyDataMapper) {
-        //     //         polyDataMapper->SetInputData(transformedPolyData);
-        //     //     }
-        //     //     else {
-        //     //         std::cerr << "The mapper is not a vtkPolyDataMapper!" << std::endl;
-        //     //     }
-
-        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter1 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        //     //     transformFilter1->SetTransform(calibrate_transform);
-
-        //     //     for (int i = 0; i < 4; i++) {
-        //     //         // 获取当前 Actor 的 Mapper 并检查其类型
-        //     //         vtkSmartPointer<vtkPolyDataMapper> polyDataMapper = vtkPolyDataMapper::SafeDownCast(mouthActors[i]->GetMapper());
-
-        //     //         // 获取当前 Actor 的输入数据并检查其有效性
-        //     //         vtkSmartPointer<vtkPolyData> polyData = polyDataMapper->GetInput();
-        //     //         // 设置 TransformPolyDataFilter 的输入数据
-        //     //         transformFilter1->SetInputData(polyData);
-        //     //         transformFilter1->Update();
-
-        //     //         // 将变换后的数据设置回 Mapper
-        //     //         vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter1->GetOutput();
-        //     //         polyDataMapper->SetInputData(transformedPolyData);
-        //     //     }
-
-        //     //     vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-        //     //     transformFilter2->SetTransform(calibrate_transform);
-        //     //     vtkSmartPointer<vtkPolyDataMapper> polyDataMapper2 = vtkPolyDataMapper::SafeDownCast(mouthActors_lower[0]->GetMapper());
-
-        //     //     // 获取当前 Actor 的输入数据并检查其有效性
-        //     //     vtkSmartPointer<vtkPolyData> polyData2= polyDataMapper2->GetInput();
-        //     //     // 设置 TransformPolyDataFilter 的输入数据
-        //     //     transformFilter2->SetInputData(polyData2);
-        //     //     transformFilter2->Update();
-
-        //     //     // 将变换后的数据设置回 Mapper
-        //     //     vtkSmartPointer<vtkPolyData> transformedPolyData2 = transformFilter2->GetOutput();
-        //     //     polyDataMapper2->SetInputData(transformedPolyData2);
-
-        //     //     //m_mesh_view->setCameraProperties(campos,focalpoint,viewup,true,60);
-
-        //     //     vtkCamera* camera = renderer_main->GetActiveCamera();
-
-        //     //     // 设置相机的新位置
-        //     //     camera->SetPosition(0, 0, -300);
-
-        //     //     // 设置相机焦点为模型中心
-        //     //     camera->SetFocalPoint(0, 0, 0);
-
-        //     //     // 可选: 设置相机的上方向，防止图像上下颠倒
-        //     //     camera->SetViewUp(0, -1, 0); // 根据实际情况调整
-        //     //     renderer_main->ResetCamera();
-        //     //     renderer_main->GetRenderWindow()->Render();
-        //     //     isCalibrated = false;
-        //     // }
-
-        // }
-
-    });
 
 
     connect(buttonFree, &QPushButton::clicked, this, [this]() {
@@ -430,7 +357,7 @@ SmileDesigenWidget::SmileDesigenWidget(QWidget* parent) : QWidget(parent)
             if(firstimport){
                 if (!assembly1) {
                     cout<<"没有整体牙"<<endl;
-                    importTooth("./resources/teeth");
+                    importTooth("./resources/teeth/style");
 
                 }
                 firstimport = false;
@@ -611,6 +538,8 @@ void SmileDesigenWidget::initUI() {
     teethComboBox->addItem(QIcon("./resources/pic/teeth1.png"), tr("Model 2"));
     teethComboBox->addItem(QIcon("./resources/pic/teeth2.png"), tr("Model 3"));
     teethComboBox->addItem(QIcon("./resources/pic/style5.0.png"), tr("Model 4"));
+    teethComboBox->addItem(QIcon("./resources/pic/style4.2.png"), tr("Model 5"));
+    teethComboBox->addItem(QIcon("./resources/pic/style4.1.png"), tr("Model 6"));
     //layoutWidget->insertWidget(2, teethComboBox);  // 将 teethComboBox 插入到第 1 个位置
     //layoutW2->addWidget(teethComboBox);
     connect(teethComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){
@@ -620,26 +549,30 @@ void SmileDesigenWidget::initUI() {
         switch(index){
         case 0:{
             cout<<"teethComboBox index==0"<<endl;
-            importTooth("./resources/teeth");
-            break;
-        }
-        case 1:{
-            cout<<"teethComboBox index==1"<<endl;
             importTooth("./resources/teeth/style");
             break;
         }
-        case 2:{
+
+        case 1:{
             importTooth("./resources/teeth/style6.4");
             break;
         }
-        case 3:{
+        case 2:{
             importTooth("./resources/teeth/style5.0");
+            break;
+        }
+        case 3:{
+            importTooth("./resources/teeth/style4.2");
+            break;
+        }
+        case 4:{
+            importTooth("./resources/teeth/style4.1");
             break;
         }
         }
     });
     // 添加按钮，点击时显示/隐藏悬浮窗口
-    QPushButton* showDialogButton = new QPushButton(tr("Adjust Color"), this);
+    showDialogButton = new QPushButton(tr("Adjust Color"), this);
 
     QHBoxLayout* layoutSmile = new QHBoxLayout();
     layoutSmile->setContentsMargins(0, 0, 0, 0);
@@ -937,7 +870,7 @@ void SmileDesigenWidget::initUI() {
 
     floatingLayout->addWidget(colorPickerWidget);
 
-    QPushButton* buttonBool = new QPushButton(this);
+    buttonBool = new QPushButton(this);
     buttonBool->setText(tr("Calculate Veneer"));
 
     connect(buttonBool,&QPushButton::clicked,this,[=](){
@@ -1131,7 +1064,11 @@ void SmileDesigenWidget::initUI() {
         }
 
     });
-
+    connect(teethPreview,&TeethPreview::choseNumsOfTeeth,this,[=](int teethNum){
+        if(teethNum>0){
+            resetButton(buttonImport,true);
+        }
+    });
 }
 
 void SmileDesigenWidget::initVTK() {
@@ -1729,7 +1666,7 @@ bool SmileDesigenWidget::importMouth() {
                 mouthActor->GetProperty()->SetSpecularPower(30);
                 // mouthActor->SetPickable(0);
                 mouths.push_back(mouthActor);
-                cout << "111111111" << endl;
+                //cout << "111111111" << endl;
             }
 
         }
@@ -1813,7 +1750,7 @@ bool SmileDesigenWidget::importMouth() {
 
                 // mouthActor->SetPickable(0);
                 mouths_lower.push_back(mouthActor);
-                cout << "111111111" << endl;
+                //cout << "111111111" << endl;
             }
 
         }
@@ -2132,21 +2069,27 @@ void SmileDesigenWidget::onCheckBoxStateChanged(int state) {
 
 
 void SmileDesigenWidget::syncRefresh() {
-    // w3D_main->renderWindow()->GetInteractor()->Render();
-    // w3D_coronal->renderWindow()->GetInteractor()->Render();
-    // w3D_sagittal->renderWindow()->GetInteractor()->Render();
-    // w3D_top->renderWindow()->GetInteractor()->Render();
-    //cout<<"sync"<<endl;
+
+
+
+    HandleInteractor* currentstyle1 = dynamic_cast<HandleInteractor*>(w3D_coronal->renderWindow()->GetInteractor()->GetInteractorStyle());
+    if(currentstyle1->isHaveBox()){
+        currentstyle1->generateBox2D();
+    }
+
+    HandleInteractor* currentstyle2 = dynamic_cast<HandleInteractor*>(w3D_sagittal->renderWindow()->GetInteractor()->GetInteractorStyle());
+    if(currentstyle2->isHaveBox()){
+        currentstyle2->generateBox2D();
+    }
+    HandleInteractor* currentstyle3 = dynamic_cast<HandleInteractor*>(w3D_top->renderWindow()->GetInteractor()->GetInteractorStyle());
+    if(currentstyle3->isHaveBox()){
+        currentstyle3->generateBox2D();
+    }
     w3D_main->renderWindow()->Render();
     w3D_coronal->renderWindow()->Render();
     w3D_sagittal->renderWindow()->Render();
     w3D_top->renderWindow()->Render();
 
-    //vtk8.2
-    // w3D_main->GetRenderWindow()->GetInteractor()->Render();
-    // w3D_coronal->GetRenderWindow()->GetInteractor()->Render();
-    // w3D_sagittal->GetRenderWindow()->GetInteractor()->Render();
-    // w3D_top->GetRenderWindow()->GetInteractor()->Render();
 }
 
 void SmileDesigenWidget::flipView() {
@@ -2613,13 +2556,14 @@ void SmileDesigenWidget::onPointSelected(int pointNum, double x, double y, doubl
         // 获取变换后的数据
         vtkSmartPointer<vtkPolyData> transformedPolyData = transformFilter->GetOutput();
 
-        vtkSmartPointer<vtkSTLWriter> writer1 = vtkSmartPointer<vtkSTLWriter>::New();
-        writer1->SetFileName(("transform_face.stl"));
-        writer1->SetInputData(transformedPolyData);
-        writer1->Write();
-        cout<<"transform_face.stl have saved"<<endl;
+        // vtkSmartPointer<vtkSTLWriter> writer1 = vtkSmartPointer<vtkSTLWriter>::New();
+        // writer1->SetFileName(("transform_face.stl"));
+        // writer1->SetInputData(transformedPolyData);
+        // writer1->Write();
+        // cout<<"transform_face.stl have saved"<<endl;
         //faceActor->SetUserTransform(m_transform);
-
+        cout<<"头位矫正已完成"<<endl;
+        resetButton(buttonCalibrate,true);
         vtkPolyDataMapper* polyDataMapper = dynamic_cast<vtkPolyDataMapper*>(faceActor->GetMapper());
         if (polyDataMapper) {
             polyDataMapper->SetInputData(transformedPolyData);
@@ -2952,12 +2896,7 @@ void SmileDesigenWidget::importAll() {
     }
     initStyle();
     firstimport = true;
-    smileStyle->removePoint();
-    smileStyle->isHasLine = false;
-    buttonclearLine->setText(tr("Add Auxiliary Line"));
-
-    polylinelabel->hide();
-    polylinecomboBox->hide();
+    resetStatus();
     teethComboBox->setCurrentIndex(0);
 
     renderer_main->RemoveAllViewProps();
@@ -2996,7 +2935,9 @@ void SmileDesigenWidget::importAll() {
     //importFace();
     //importMouth();
     if(importFace()&&importMouth()){
+        resetButton(buttonImport,false);
         teethPreview->exec();
+
     }
 
 }
@@ -3134,4 +3075,27 @@ void SmileDesigenWidget::boolteeth1(){
 
 
 }
+void SmileDesigenWidget::resetButton(QPushButton* currentButton,bool isEnable){
+    QList<QPushButton*> buttons = {buttonCalibrate,buttonImport,buttonMatch,buttonAutoCut,buttonLine,showDialogButton,buttonBool};
+
+    for(auto button:buttons){
+        if(button!=currentButton){
+            button->setEnabled(isEnable);
+        }
+
+    }
+
+}
+
+void SmileDesigenWidget::resetStatus(){
+
+    smileStyle->removePoint();
+    smileStyle->isHasLine = false;
+    buttonclearLine->setText(tr("Add Auxiliary Line"));
+
+    polylinelabel->hide();
+    polylinecomboBox->hide();
+    syncRefresh();
+}
+
 
